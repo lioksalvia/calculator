@@ -1,12 +1,14 @@
 ﻿project(calculator VERSION 1.0 LANGUAGES CXX)
 
 set(HEADERS
-    include/calculator/api.hpp
-    include/calculator/calculator.hpp
+        include/api.hpp
+        include/calculator.hpp
+        include/value.hpp
 )
 
 set(SOURCES
-    src/calculator.cpp
+        src/calculator.cpp
+        src/value.cpp
 )
 
 add_library(calculator SHARED ${SOURCES})

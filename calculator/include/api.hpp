@@ -1,5 +1,5 @@
-#ifndef CALCULATOR__API_HPP_
-#define CALCULATOR__API_HPP_
+#ifndef CALCULATOR_API_HPP_
+#define CALCULATOR_API_HPP_
 
 #ifdef _WIN32
 #ifdef CALCULATOR_EXPORTS
@@ -11,4 +11,4 @@
 #define CALCULATOR_API
 #endif
 
-#endif  // !CALCULATOR__API_HPP_
+#endif  // !CALCULATOR_API_HPP_
