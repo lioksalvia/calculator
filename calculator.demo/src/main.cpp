@@ -5,6 +5,6 @@
 using namespace calculator;
 
 int main() {
-  std::cout << "3 + 5 = " << add(37, 5) << std::endl;
+  std::cout << "1 + 1 = " << add(1, 1) << std::endl;
   return 0;
 }

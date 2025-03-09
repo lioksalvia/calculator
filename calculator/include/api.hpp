@@ -7,7 +7,7 @@
 #else
 #define CALCULATOR_API __declspec(dllimport)
 #endif
-#elif
+#else
 #define CALCULATOR_API
 #endif
 
