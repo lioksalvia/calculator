@@ -3,12 +3,14 @@
 set(HEADERS
         include/api.hpp
         include/calculator.hpp
+        include/calculator_error.hpp
         include/value.hpp
 )
 
 set(SOURCES
         src/calculator.cpp
         src/value.cpp
+        src/calculator_error.cpp
 )
 
 add_library(calculator SHARED ${SOURCES})

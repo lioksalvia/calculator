@@ -1,5 +1,7 @@
 #include <format>
+#include <sstream>
 
+#include "../include/calculator_error.hpp"
 #include "../include/value.hpp"
 
 using namespace calculator;
@@ -43,15 +45,17 @@ std::string Value::ToString(std::string_view delimiter, std::string_view number_
     return std::vformat(format, std::make_format_args(std::get<number_t>(*value_)));
   }
 
-  std::string str;
+  std::ostringstream os;
+  os << "[";
   const auto& vec = std::get<vector_t>(*value_);
   for (size_t i = 0, n = vec.size(); i < n; ++i) {
     if (i != 0) {
-      str += delimiter;
+      os << delimiter;
     }
-    str += vec[i].ToString(delimiter, number_format);
+    os << vec[i].ToString(delimiter, number_format);
   }
-  return "[" + str + "]";
+  os << "]";
+  return os.str();
 }
 
 bool Value::isNumber() const {
@@ -67,7 +71,7 @@ const value_t& Value::value() const { return *value_; }
 
 bool calculator::operator==(const Value& lhs, const Value& rhs) {
   if (lhs.value_->index() != rhs.value_->index()) {
-    throw std::exception{};
+    throw std::system_error(CalculatorErrc::TypeMismatch);
   }
 
   return *lhs.value_ == *rhs.value_;
@@ -79,7 +83,7 @@ bool calculator::operator!=(const Value& lhs, const Value& rhs) {
 
 bool calculator::operator<(const Value& lhs, const Value& rhs) {
   if (!lhs.isNumber() || !rhs.isNumber()) {
-    throw std::exception{};
+    throw std::system_error(CalculatorErrc::TypeMismatch);
   }
   return *lhs.value_ < *rhs.value_;
 }
@@ -118,13 +122,12 @@ Value calculator::operator+(const Value& lhs, const Value& rhs) {
   }
   auto& vec1 = std::get<vector_t>(*lhs.value_);
   auto& vec2 = std::get<vector_t>(*rhs.value_);
-  auto n = vec1.size();
-  if (vec2.size() != n) {
-    throw std::exception{};
-  }
-  vector_t temp = std::move(vec1);
-  for (size_t i = 0; i < n; ++i) {
-    temp[i] += vec2[i];
+  auto& longer_vec = vec1.size() >= vec2.size() ? vec1 : vec2;
+  const auto& shorter_vec = &longer_vec == &vec1 ? vec2 : vec1;
+
+  vector_t temp = std::move(longer_vec);
+  for (size_t i = 0, n = shorter_vec.size(); i < n; ++i) {
+    temp[i] += shorter_vec[i];
   }
   return Value(std::move(temp));
 }
@@ -133,19 +136,25 @@ Value& calculator::operator+=(Value& lhs, const Value& rhs) {
   return lhs = lhs + rhs;
 }
 
-Value calculator::operator-(const Value& lhs, const Value& rhs) { throw std::exception{}; }
+Value calculator::operator-(const Value& lhs, const Value& rhs) {
+  throw std::system_error(CalculatorErrc::NotImplemented);
+}
 
 Value& calculator::operator-=(Value& lhs, const Value& rhs) {
   return lhs = lhs - rhs;
 }
 
-Value calculator::operator*(const Value& lhs, const Value& rhs) { throw std::exception{}; }
+Value calculator::operator*(const Value& lhs, const Value& rhs) {
+  throw std::system_error(CalculatorErrc::NotImplemented);
+}
 
 Value& calculator::operator*=(Value& lhs, const Value& rhs) {
   return lhs = lhs * rhs;
 }
 
-Value calculator::operator/(const Value& lhs, const Value& rhs) { throw std::exception{}; }
+Value calculator::operator/(const Value& lhs, const Value& rhs) {
+  throw std::system_error(CalculatorErrc::NotImplemented);
+}
 
 Value& calculator::operator/=(Value& lhs, const Value& rhs) {
   return lhs = lhs / rhs;
