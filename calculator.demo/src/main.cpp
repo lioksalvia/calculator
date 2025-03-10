@@ -6,6 +6,8 @@
 using namespace calculator;
 
 int main() {
-  std::cout << (Value(std::vector<int>{3}) == Value(4)) << std::endl;
+  std::vector<int> a{1, 2, 3};
+  vector_t b{1, a, 3};
+  std::cout << (Value(a) + Value(b)) << std::endl;
   return 0;
 }
