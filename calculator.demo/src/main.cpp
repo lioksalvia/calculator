@@ -1,13 +1,13 @@
 #include <iostream>
 
 #include "../../calculator/include/calculator.hpp"
-#include "../../calculator/include/value.hpp"
+#include "../../calculator/include/vector.hpp"
 
 using namespace calculator;
 
 int main() {
   std::vector<int> a{1, 2};
-  vector_t b{1, a, 3};
-  std::cout << (Value(a) + Value(b)) << std::endl;
+  Vector b(1, 2, 3);
+  std::cout << (Vector(a) + Vector(b)) << std::endl;
   return 0;
 }
