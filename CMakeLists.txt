@@ -5,4 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_subdirectory(calculator)
-add_subdirectory(calculator.demo)
+add_subdirectory(demo)
+add_subdirectory(tests)
+
+enable_testing()

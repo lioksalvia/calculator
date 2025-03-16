@@ -1,5 +1,5 @@
 #include "calculator.hpp"
 
-using namespace calculator;
+using namespace lioksalvia::calculator;
 
-int Calculator::add(int a, int b) { return a + b; }
+int calculator::add(int a, int b) { return a + b; }

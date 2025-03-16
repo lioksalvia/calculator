@@ -1,31 +1,31 @@
 #include "../include/calculator_error.hpp"
 
-using namespace calculator;
+using namespace lioksalvia::calculator;
 
-const char* CalculatorErrorCategory::name() const noexcept {
+const char* calculator_category::name() const noexcept {
   return "calculator";
 }
 
-std::string CalculatorErrorCategory::message(int ev) const {
-  switch (static_cast<CalculatorErrc>(ev)) {
-    case CalculatorErrc::Success:
+std::string calculator_category::message(int ev) const {
+  switch (static_cast<calculator_errc>(ev)) {
+    case calculator_errc::success:
       return "no error";
-    case CalculatorErrc::NotImplemented:
+    case calculator_errc::not_implemented:
       return "operation is not implemented yet";
-    case CalculatorErrc::DivisionByZero:
+    case calculator_errc::division_by_zero:
       return "division by zero";
-    case CalculatorErrc::TypeMismatch:
+    case calculator_errc::type_mismatch:
       return "type mismatch in operation";
     default:
       return "unknown error";
   }
 }
 
-const CalculatorErrorCategory& calculator::calculator_error_category() {
-  static CalculatorErrorCategory instance;
+const calculator_category& lioksalvia::calculator::get_calculator_category() {
+  static calculator_category instance;
   return instance;
 }
 
-std::error_code calculator::make_error_code(CalculatorErrc e) {
-  return {static_cast<int>(e), calculator_error_category()};
+std::error_code lioksalvia::calculator::make_error_code(calculator_errc e) {
+  return {static_cast<int>(e), get_calculator_category()};
 }

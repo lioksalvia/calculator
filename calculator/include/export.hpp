@@ -1,0 +1,14 @@
+#ifndef LIOKSALVIA_CALCULATOR_EXPORT_HPP_
+#define LIOKSALVIA_CALCULATOR_EXPORT_HPP_
+
+#ifdef _WIN32
+#ifdef LIOKSALVIA_CALCULATOR_EXPORTS
+#define LIOKSALVIA_CALCULATOR_API __declspec(dllexport)
+#else
+#define LIOKSALVIA_CALCULATOR_API __declspec(dllimport)
+#endif
+#else
+#define LIOKSALVIA_CALCULATOR_API
+#endif
+
+#endif  // !LIOKSALVIA_CALCULATOR_EXPORT_HPP_

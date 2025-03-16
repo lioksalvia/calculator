@@ -1,31 +1,30 @@
-#ifndef CALCULATOR_CALCULATOR_ERROR_HPP_
-#define CALCULATOR_CALCULATOR_ERROR_HPP_
+#ifndef LIOKSALVIA_CALCULATOR_CALCULATOR_ERROR_HPP_
+#define LIOKSALVIA_CALCULATOR_CALCULATOR_ERROR_HPP_
 
-#include <system_error>
 #include <string>
+#include <system_error>
 
-namespace calculator {
-enum class CalculatorErrc {
-  Success = 0,
-  NotImplemented,
-  DivisionByZero,
-  TypeMismatch,
+#include "export.hpp"
+
+namespace lioksalvia::calculator {
+
+enum class LIOKSALVIA_CALCULATOR_API calculator_errc {
+  success = 0, not_implemented, division_by_zero, type_mismatch,
 };
 
-class CalculatorErrorCategory final : public std::error_category {
-public:
-  [[nodiscard]] const char* name() const noexcept override;
-
-  [[nodiscard]] std::string message(int ev) const override;
+class LIOKSALVIA_CALCULATOR_API calculator_category final : public std::error_category {
+  public:
+    [[nodiscard]] const char* name() const noexcept override;
+    [[nodiscard]] std::string message(int ev) const override;
 };
 
-const CalculatorErrorCategory& calculator_error_category();
+LIOKSALVIA_CALCULATOR_API const calculator_category& get_calculator_category();
+LIOKSALVIA_CALCULATOR_API std::error_code make_error_code(calculator_errc e);
 
-std::error_code make_error_code(CalculatorErrc e);
-
-} // namespace calculator
+} // namespace lioksalvia::calculator
 
 template <>
-struct std::is_error_code_enum<calculator::CalculatorErrc> : true_type {};
+struct std::is_error_code_enum<lioksalvia::calculator::calculator_errc> : true_type {
+};
 
-#endif // !CALCULATOR_CALCULATOR_ERROR_HPP_
+#endif // !LIOKSALVIA_CALCULATOR_CALCULATOR_ERROR_HPP_

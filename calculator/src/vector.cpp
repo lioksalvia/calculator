@@ -1,182 +1,178 @@
-#include "../include/vector.hpp"
-
 #include <format>
 #include <sstream>
 
 #include "../include/calculator_error.hpp"
+#include "../include/detail/vector.hpp"
 
-using namespace calculator;
+using namespace lioksalvia::calculator;
+using namespace lioksalvia::calculator::detail;
 
-Vector::Vector() = default;
+vector::vector() = default;
 
-Vector::Vector(const Vector& other) = default;
+vector::vector(const vector &other) = default; // NOLINT(*-no-recursion)
 
-Vector::Vector(Vector&& other) noexcept = default;
+vector::vector(vector &&other) noexcept = default;
 
-Vector& Vector::operator=(const Vector& other) = default;
+vector &vector::operator=(const vector &other) = default; // NOLINT(*-no-recursion)
 
-Vector& Vector::operator=(Vector&& other) noexcept = default;
+vector &vector::operator=(vector &&other) noexcept = default;
 
-std::string Vector::ToString() const {
+std::string vector::ToString() const {
   std::ostringstream os;
   os << *this;
   return os.str();
 }
 
-const std::vector<value_t>& Vector::value() const { return value_; }
+const std::vector<value_t> &vector::value() const { return value_; }
 
-bool calculator::operator==(const Vector& lhs, const Vector& rhs) {
+bool detail::operator==(const vector &lhs, const vector &rhs) { // NOLINT(*-no-recursion)
   return lhs.value_ == rhs.value_;
 }
 
-bool calculator::operator!=(const Vector& lhs, const Vector& rhs) {
+bool detail::operator!=(const vector &lhs, const vector &rhs) {
   return !(lhs == rhs);
 }
 
-Vector calculator::operator-(Vector value) {
-  for (auto& val : value.value_) {
-    val = std::visit(
-        []<typename T0>(T0&& v) -> value_t {
-          using T = std::decay_t<T0>;
-          if constexpr (std::is_same_v<T, number_t> || std::is_same_v<T, Vector>) {
-            return -v;
-          }
-        },
-        val);
+vector detail::operator-(vector value) { // NOLINT(*-no-recursion)
+  for (auto &val: value.value_) {
+    val = std::visit([]<typename T0>(T0 &&v) -> value_t { // NOLINT(*-no-recursion)
+        using T = std::decay_t<T0>;
+        if constexpr (std::is_same_v<T, number_t> || std::is_same_v<T, vector>) {
+          return -v;
+        }
+        throw std::system_error(calculator_errc::type_mismatch);
+      }, val);
   }
   return value;
 }
 
-Vector calculator::operator+(Vector lhs, const Vector& rhs) {
+vector detail::operator+(vector lhs, const vector &rhs) {
   return lhs += rhs;
 }
 
-Vector& calculator::operator+=(Vector& lhs, const Vector& rhs) {
-  const auto newSize = std::max(lhs.value_.size(), rhs.value_.size());
-  lhs.value_.resize(newSize);
+vector &detail::operator+=(vector &lhs, const vector &rhs) {
+  const auto new_size = std::max(lhs.value_.size(), rhs.value_.size());
+  lhs.value_.resize(new_size);
 
   for (size_t i = 0, n = rhs.value_.size(); i < n; ++i) {
-    lhs.value_[i] = std::visit(
-        []<typename T0, typename T1>(T0& l, const T1& r) -> value_t {
-          using L = std::decay_t<T0>;
-          using R = std::decay_t<T1>;
+    lhs.value_[i] = std::visit([]<typename T0, typename T1>(T0 &l, const T1 &r) -> value_t {
+      using L = std::decay_t<T0>;
+      using R = std::decay_t<T1>;
 
-          if constexpr (std::is_same_v<L, number_t> &&
-                        std::is_same_v<R, number_t>) {
-            return l += r;
-          } else if constexpr (std::is_same_v<L, number_t> &&
-                               std::is_same_v<R, Vector>) {
-            return r + l;
-          } else if constexpr (std::is_same_v<L, Vector> &&
-                               std::is_same_v<R, number_t>) {
-            return l += r;
-          } else if constexpr (std::is_same_v<L, Vector> &&
-                               std::is_same_v<R, Vector>) {
-            return l += r;
-          }
-        },
-        lhs.value_[i], rhs.value_[i]);
+      if constexpr ((std::is_same_v<L, number_t> && std::is_same_v<R, number_t>) || (
+                      std::is_same_v<L, vector> && std::is_same_v<R, number_t>) || (
+                      std::is_same_v<L, vector> && std::is_same_v<R, vector>)) {
+        return l += r;
+      } else if constexpr (std::is_same_v<L, number_t> && std::is_same_v<R, vector>) {
+        return r + l;
+      }
+      throw std::system_error(calculator_errc::type_mismatch);
+    }, lhs.value_[i], rhs.value_[i]);
   }
   return lhs;
 }
 
-Vector calculator::operator-(Vector lhs, const Vector& rhs) {
+vector detail::operator-(vector lhs, const vector &rhs) {
   return lhs -= rhs;
 }
 
-Vector& calculator::operator-=(Vector& lhs, const Vector& rhs) {
-  const auto newSize = std::max(lhs.value_.size(), rhs.value_.size());
-  lhs.value_.resize(newSize);
+vector &detail::operator-=(vector &lhs, const vector &rhs) {
+  const auto new_size = std::max(lhs.value_.size(), rhs.value_.size());
+  lhs.value_.resize(new_size);
 
   for (size_t i = 0, n = rhs.value_.size(); i < n; ++i) {
-    lhs.value_[i] = std::visit(
-        []<typename T0, typename T1>(T0& l, const T1& r) -> value_t {
-          using L = std::decay_t<T0>;
-          using R = std::decay_t<T1>;
+    lhs.value_[i] = std::visit([]<typename T0, typename T1>(T0 &l, const T1 &r) -> value_t {
+      using L = std::decay_t<T0>;
+      using R = std::decay_t<T1>;
 
-          if constexpr ((std::is_same_v<L, number_t> && std::is_same_v<R, number_t>) ||
-                        (std::is_same_v<L, Vector> && std::is_same_v<R, number_t>) ||
-                        (std::is_same_v<L, Vector> && std::is_same_v<R, Vector>)) {
-            return l -= r;
-          } else if constexpr (std::is_same_v<L, number_t> &&
-                               std::is_same_v<R, Vector>) {
-            return r - l;
-          }
-        },
-        lhs.value_[i], rhs.value_[i]);
+      if constexpr ((std::is_same_v<L, number_t> && std::is_same_v<R, number_t>) || (
+                      std::is_same_v<L, vector> && std::is_same_v<R, number_t>) || (
+                      std::is_same_v<L, vector> && std::is_same_v<R, vector>)) {
+        return l -= r;
+      } else if constexpr (std::is_same_v<L, number_t> && std::is_same_v<R, vector>) {
+        return r - l;
+      }
+      throw std::system_error(calculator_errc::type_mismatch);
+    }, lhs.value_[i], rhs.value_[i]);
   }
   return lhs;
 }
 
-Vector calculator::operator-(number_t lhs, Vector rhs) {
-  for (auto& val : rhs.value_) {
-    std::visit([](auto& v) { v = -v; }, val);
-  }
+vector detail::operator-(number_t lhs, vector rhs) {
+  for (auto &val: rhs.value_) { std::visit([](auto &v) { v = -v; }, val); }
   return lhs + rhs;
 }
 
-Vector calculator::operator*(const Vector& lhs, const Vector& rhs) {
-  throw std::system_error(CalculatorErrc::NotImplemented);
+vector detail::operator*(const vector & /*lhs*/, const vector & /*rhs*/) {
+  throw std::system_error(calculator_errc::not_implemented);
 }
 
-Vector& calculator::operator*=(Vector& lhs, const Vector& rhs) {
-  throw std::system_error(CalculatorErrc::NotImplemented);
+vector &detail::operator*=(vector & /*lhs*/, const vector & /*rhs*/) {
+  throw std::system_error(calculator_errc::not_implemented);
 }
 
-Vector calculator::operator/(const Vector& lhs, const Vector& rhs) {
-  throw std::system_error(CalculatorErrc::NotImplemented);
+vector detail::operator/(const vector & /*lhs*/, const vector & /*rhs*/) {
+  throw std::system_error(calculator_errc::not_implemented);
 }
 
-Vector& calculator::operator/=(Vector& lhs, const Vector& rhs) {
-  throw std::system_error(CalculatorErrc::NotImplemented);
+vector &detail::operator/=(vector & /*lhs*/, const vector & /*rhs*/) {
+  throw std::system_error(calculator_errc::not_implemented);
 }
 
-std::ostream& calculator::operator<<(std::ostream& os, const Vector& value) {
+std::ostream &detail::operator<<(std::ostream &os, const vector &value) { // NOLINT(*-no-recursion)
   os << "[";
-  bool first = true;
-  for (const auto& val : value.value_) {
-    if (!first)
-      os << ", ";
-    std::visit([&os](const auto& v) { os << v; }, val);
+  auto first = true;
+  for (const auto &val: value.value_) {
+    if (!first) { os << ", "; }
+    std::visit([&os](const auto &v) { os << v; }, val); // NOLINT(*-no-recursion)
     first = false;
   }
   os << "]";
   return os;
 }
 
-Vector calculator::operator+(Vector lhs, number_t rhs) { return lhs += rhs; }
+vector detail::operator+(vector lhs, number_t rhs) { return lhs += rhs; }
 
-Vector& calculator::operator+=(Vector& lhs, number_t rhs) {
-  for (auto& val : lhs.value_) {
-    std::visit([&rhs](auto& v) { v += rhs; }, val);
+vector &detail::operator+=(vector &lhs, number_t rhs) { // NOLINT(*-no-recursion)
+  for (auto &val: lhs.value_) {
+    std::visit([rhs](auto &v) { v += rhs; }, val); // NOLINT(*-no-recursion)
   }
   return lhs;
 }
 
-Vector calculator::operator+(number_t lhs, Vector rhs) { return rhs += lhs; }
+vector detail::operator+(number_t lhs, vector rhs) { return rhs += lhs; }
 
-Vector calculator::operator-(Vector lhs, number_t rhs) { return lhs -= rhs; }
+vector detail::operator-(vector lhs, number_t rhs) { return lhs -= rhs; }
 
-Vector& calculator::operator-=(Vector& lhs, number_t rhs) {
-  return lhs += (-rhs);
+vector &detail::operator-=(vector &lhs, number_t rhs) {
+  return lhs += -rhs;
 }
 
-Vector calculator::operator*(Vector lhs, number_t rhs) { return lhs *= rhs; }
+vector detail::operator*(vector lhs, number_t rhs) {
+  lhs *= rhs;
+  return lhs;
+}
 
-Vector& calculator::operator*=(Vector& lhs, number_t rhs) {
-  for (auto& val : lhs.value_) {
-    std::visit([&rhs](auto& v) { v *= rhs; }, val);
+vector &detail::operator*=(vector &lhs, number_t rhs) { // NOLINT(*-no-recursion)
+  for (auto &val: lhs.value_) {
+    std::visit([&rhs](auto &v) { v *= rhs; }, val); // NOLINT(*-no-recursion)
   }
   return lhs;
 }
 
-Vector calculator::operator*(number_t lhs, Vector rhs) { return rhs *= lhs; }
+vector detail::operator*(number_t lhs, vector rhs) {
+  rhs *= lhs;
+  return rhs;
+}
 
-Vector calculator::operator/(Vector lhs, number_t rhs) { return lhs /= rhs; }
+vector detail::operator/(vector lhs, number_t rhs) {
+  lhs /= rhs;
+  return lhs;
+}
 
-Vector& calculator::operator/=(Vector& lhs, number_t rhs) {
-  for (auto& val : lhs.value_) {
-    std::visit([&rhs](auto& v) { v /= rhs; }, val);
+vector &detail::operator/=(vector &lhs, number_t rhs) { // NOLINT(*-no-recursion)
+  for (auto &val: lhs.value_) {
+    std::visit([&rhs](auto &v) { v /= rhs; }, val); // NOLINT(*-no-recursion)
   }
   return lhs;
 }

@@ -1,14 +1,7 @@
-#ifndef CALCULATOR_API_HPP_
-#define CALCULATOR_API_HPP_
+#ifndef LIOKSALVIA_CALCULATOR_API_HPP_
+#define LIOKSALVIA_CALCULATOR_API_HPP_
 
-#ifdef _WIN32
-#ifdef CALCULATOR_EXPORTS
-#define CALCULATOR_API __declspec(dllexport)
-#else
-#define CALCULATOR_API __declspec(dllimport)
-#endif
-#else
-#define CALCULATOR_API
-#endif
+#include "calculator.hpp"
+#include "calculator_error.hpp"
 
-#endif  // !CALCULATOR_API_HPP_
+#endif // !LIOKSALVIA_CALCULATOR_API_HPP_

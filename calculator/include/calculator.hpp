@@ -1,15 +1,15 @@
-#ifndef CALCULATOR_CALCULATOR_HPP_
-#define CALCULATOR_CALCULATOR_HPP_
+#ifndef LIOKSALVIA_CALCULATOR_CALCULATOR_HPP_
+#define LIOKSALVIA_CALCULATOR_CALCULATOR_HPP_
 
-#include "api.hpp"
+#include "export.hpp"
 
-namespace calculator {
+namespace lioksalvia::calculator {
 
-class CALCULATOR_API Calculator {
-public:
-  static int add(int a, int b);
+class LIOKSALVIA_CALCULATOR_API calculator final {
+  public:
+    static int add(int a, int b);
 };
 
-} // namespace calculator
+} // namespace lioksalvia::calculator
 
-#endif  // !CALCULATOR_CALCULATOR_HPP_
+#endif  // !LIOKSALVIA_CALCULATOR_CALCULATOR_HPP_
