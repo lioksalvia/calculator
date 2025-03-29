@@ -9,21 +9,21 @@
 namespace lioksalvia::calculator {
 
 enum class LIOKSALVIA_CALCULATOR_API calculator_errc {
-  success = 0, not_implemented, division_by_zero, type_mismatch,
+  success = 0, division_by_zero, not_implemented, type_mismatch,
 };
 
 class LIOKSALVIA_CALCULATOR_API calculator_category final : public std::error_category {
-  public:
-    [[nodiscard]] const char* name() const noexcept override;
-    [[nodiscard]] std::string message(int ev) const override;
+public:
+  [[nodiscard]] const char *name() const noexcept override;
+
+  [[nodiscard]] std::string message(int ev) const override;
 };
 
-LIOKSALVIA_CALCULATOR_API const calculator_category& get_calculator_category();
 LIOKSALVIA_CALCULATOR_API std::error_code make_error_code(calculator_errc e);
 
 } // namespace lioksalvia::calculator
 
-template <>
+template<>
 struct std::is_error_code_enum<lioksalvia::calculator::calculator_errc> : true_type {
 };
 

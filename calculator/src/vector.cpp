@@ -1,8 +1,8 @@
 #include <format>
 #include <sstream>
 
-#include "../include/calculator_error.hpp"
-#include "../include/detail/vector.hpp"
+#include "calculator_error.hpp"
+#include "detail/vector.hpp"
 
 using namespace lioksalvia::calculator;
 using namespace lioksalvia::calculator::detail;
@@ -17,7 +17,7 @@ vector &vector::operator=(const vector &other) = default; // NOLINT(*-no-recursi
 
 vector &vector::operator=(vector &&other) noexcept = default;
 
-std::string vector::ToString() const {
+std::string vector::to_string() const {
   std::ostringstream os;
   os << *this;
   return os.str();
@@ -98,25 +98,25 @@ vector &detail::operator-=(vector &lhs, const vector &rhs) {
   return lhs;
 }
 
+value_t detail::operator*(const vector &lhs, const vector &rhs) {
+  static auto multiply = [](const auto &a, const auto &b) -> value_t {
+    return a * b;
+  };
+
+  static auto add = [](const auto &a, const auto &b) -> value_t {
+    return a + b;
+  };
+
+  value_t result{static_cast<number_t>(0)};
+  for (size_t i = 0, n = std::min(lhs.value_.size(), rhs.value_.size()); i < n; ++i) {
+    result = std::visit(add, result, std::visit(multiply, lhs.value_[i], rhs.value_[i]));
+  }
+  return result;
+}
+
 vector detail::operator-(number_t lhs, vector rhs) {
   for (auto &val: rhs.value_) { std::visit([](auto &v) { v = -v; }, val); }
   return lhs + rhs;
-}
-
-vector detail::operator*(const vector & /*lhs*/, const vector & /*rhs*/) {
-  throw std::system_error(calculator_errc::not_implemented);
-}
-
-vector &detail::operator*=(vector & /*lhs*/, const vector & /*rhs*/) {
-  throw std::system_error(calculator_errc::not_implemented);
-}
-
-vector detail::operator/(const vector & /*lhs*/, const vector & /*rhs*/) {
-  throw std::system_error(calculator_errc::not_implemented);
-}
-
-vector &detail::operator/=(vector & /*lhs*/, const vector & /*rhs*/) {
-  throw std::system_error(calculator_errc::not_implemented);
 }
 
 std::ostream &detail::operator<<(std::ostream &os, const vector &value) { // NOLINT(*-no-recursion)

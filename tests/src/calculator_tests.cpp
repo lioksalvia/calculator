@@ -13,15 +13,10 @@ BOOST_AUTO_TEST_CASE(should_return_sum_when_adding_two_numbers) {
     int expected;
   };
 
-  const std::vector<TestCase> test_cases = {
-    {2, 3, 5},
-    {-1, 1, 0},
-    {0, 0, 0},
-    {-5, -7, -12}
-  };
+  const std::vector<TestCase> test_cases{{2, 3, 5}, {-1, 1, 0}, {0, 0, 0}, {-5, -7, -12}};
 
   // Act, Assert
-  for (const auto& [a, b, expected] : test_cases) {
+  for (const auto &[a, b, expected]: test_cases) {
     BOOST_TEST(calculator::add(a, b) == expected);
   }
 }
